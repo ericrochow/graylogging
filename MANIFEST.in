@@ -1,0 +1,2 @@
+include setup.py setup.cfg MANIFEST.in README.md HISTORY.md requirements.txt
+recursive-include graylogging
