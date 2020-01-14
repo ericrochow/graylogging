@@ -1,5 +1,13 @@
 # HISTORY
 
+## 1.1.0
+
+* Initial commit to github after being a private project.
+
+### Known Issues
+
+* Cannot decouple the formatter. Hardcoded to use the GraylogHandler class.
+
 ## 1.0.2
 
 * Documentation updates.
