@@ -10,9 +10,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 about = {}
 
 with open(
-    os.path.join(here, "graylogging", "__version__.py"),
-    mode="r",
-    encoding="utf-8",
+    os.path.join(here, "graylogging", "__version__.py"), mode="r", encoding="utf-8"
 ) as f:
     exec(f.read(), about)
 
@@ -23,7 +21,8 @@ with open("HISTORY.md", mode="r", encoding="utf-8") as f:
 
 if sys.argv[-1] == "publish":
     os.system("python setup.py sdist bdist_wheel")
-    os.system("devpi upload")
+    os.system("twine check dist/*")
+    os.system("twine upload dist/*")
     sys.exit()
 
 
@@ -70,9 +69,7 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     description=about["__description__"],
-    extras_require={
-        "docs": ["Sphinx", "SimpleHTTPServer", "sphinx_rtd_theme"]
-    },
+    extras_require={"docs": ["Sphinx", "SimpleHTTPServer", "sphinx_rtd_theme"]},
     install_requires=["requests[security]"],
     long_description=readme,
     name=about["__title__"],
