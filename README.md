@@ -4,43 +4,15 @@ Graylogging is an extension to the built-in logging module that allows logs to b
 
 ## Installation
 
-Graylogging does not exist on public pypi, so installation must be done from our local pypi server (pypiserver.noc.liquidweb.com). The package can be installed by one of the following methods:
+The package can be installed by one of the following methods:
 
 ### PIP
 
-#### CLI arguments
-
-::
-    pip install --index-url=https://pypiserver.noc.liquidweb.com/noc/network/+simple/  --trusted-host=pypiserver.noc.liquidweb.com graylogging
-
-#### Config file
-
-Add the following to either `/etc/pip.conf` or `~/.pip.pip.conf`:
-
-::
-    [global]
-    index-url = https://pypiserver.noc.liquidweb.com/noc/network/+simple/
-    trusted-host = pypiserver.noc.liquidweb.com
-
-    [search]
-    index = https://pypiserver.noc.liquidweb.com/noc/network/
+    pip install graylogging
 
 ### Pipenv
 
-#### CLI aruments
-
-::
-    pipenv install --pypi-mirror https://pypiserver.noc.liquidweb.com/noc/network/+simple/
-
-#### Pipfile
-
-Update the `[[source]]` section of the Pipfile for your project to include the following:
-
-::
-    [[source]]
-    name = pypi
-    url = "https://pypiserver.noc.liquidweb.com/noc/network/"
-    verify_ssl = true
+    pipenv install graylogging
 
 ## General Use
 
@@ -49,13 +21,11 @@ Update the `[[source]]` section of the Pipfile for your project to include the f
 
 Import both the `logging` and the `graylogging` module:
 
-::
     import logging
     import graylogging
 
 After those have been imported, you can use both the GraylogHandler and GraylogFormatter classes like the other built-in Formatters and Handlers:
 
-::
     logger = logging.getLogger(name)
     gh = GraylogHandler(graylog_server, gelf_port, appname="MyKickassApp")
     gh.setFormatter(GraylogFormatter)
@@ -64,7 +34,6 @@ After those have been imported, you can use both the GraylogHandler and GraylogF
 
 This handler could also be used in conjunction with another handler. For example if it's desired to output the logs to console as well, we can accomplish this with the following example:
 
-::
     graylog_server = "https://graylog.contoso.com"
     gelf_port = 12201
     appname = "MyKickassApp"
