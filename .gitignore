@@ -2,6 +2,8 @@
 tags
 *.swp
 
+# VS Code files
+.vscode
 
 # Configuration files
 tests/config.py
