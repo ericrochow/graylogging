@@ -58,12 +58,12 @@ You should be ready to roll now.
 
 One logging has been initialized, graylogging can be used just like the built-in logging module:
 
-`logger.debug(message)`
-`logger.info(message)`
-`logger.warning(message)`
-`logger.error(message)`
-`logger.critical(message)`
-`logger.exception(message)`
+    logger.debug(message)
+    logger.info(message)
+    logger.warning(message)
+    logger.error(message)
+    logger.critical(message)
+    logger.exception(message)
 
 ## Enhancements
 
