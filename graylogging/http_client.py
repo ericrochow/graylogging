@@ -3,8 +3,10 @@
 
 import requests
 
+from graylogging.tools import validate_gelf_payload
 
-class Graylog(object):
+
+class HTTPGELF(object):
     """
     """
 
@@ -95,5 +97,5 @@ class Graylog(object):
         Returns:
           The results of the POST.
         """
-        self._validate_gelf_payload(payload)
-        return self._post(payload)
+        if validate_gelf_payload(payload):
+            return self._post(payload)
