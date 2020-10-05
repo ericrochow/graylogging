@@ -156,6 +156,7 @@ class GraylogHandler(logging.Handler):
         logging.Handler.__init__(self)
         self.host = host
         self.port = port
+        self.transport = transport
         self.facility = facility
         self.closeOnError = close_on_error
         self.hostname = hostname
