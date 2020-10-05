@@ -4,7 +4,7 @@ import logging
 import socket
 import time
 
-from graylogging.client import Graylog
+from graylogging.http_client import HTTPGELF
 
 
 # class GraylogHandler(logging.Handler, logging.getLoggerClass):
@@ -169,7 +169,7 @@ class GraylogHandler(logging.Handler):
         Returns:
           An instantiated Graylog object.
         """
-        graylog = Graylog(self.host, self.port, timeout=10, verify=True)
+        graylog = HTTPGELF(self.host, self.port, timeout=10, verify=True)
         return graylog
 
     @classmethod
@@ -230,16 +230,13 @@ class GraylogHandler(logging.Handler):
         """
         extra_args = {}
         if "_id" in kwargs:
-            raise KeyError(
-                "'_id' is an internally used key and is not" " usable here"
-            )
+            raise KeyError("'_id' is an internally used key and is not" " usable here")
         for key, value in kwargs.items():
             if key.startswith("_"):
                 extra_args[key] = value
             else:
                 raise KeyError(
-                    "User-defined fields must be prepended with an"
-                    " underscore (_)."
+                    "User-defined fields must be prepended with an" " underscore (_)."
                 )
         return extra_args
 
