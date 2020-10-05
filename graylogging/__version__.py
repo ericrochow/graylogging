@@ -6,4 +6,4 @@ __description__ = (
 )
 __title__ = "graylogging"
 __url__ = "https://github.com/ericrochow/graylogging"
-__version__ = "1.1.0"
+__version__ = "2.0.0"
