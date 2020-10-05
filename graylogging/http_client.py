@@ -7,8 +7,7 @@ from graylogging.tools import validate_gelf_payload
 
 
 class HTTPGELF(object):
-    """
-    """
+    """"""
 
     def __init__(
         self,
@@ -71,8 +70,7 @@ class HTTPGELF(object):
             resp.raise_for_status()
 
     def _validate_gelf_payload(self, payload):
-        """
-        """
+        """"""
         required_keys = ["version", "host", "short_message"]
         builtin_keys = required_keys + ["full_message", "timestamp", "level"]
         for rkey in required_keys:

@@ -8,9 +8,13 @@ ipython = "*"
 pytest = "*"
 twine = "*"
 flake8 = "*"
+black = "*"
 
 [packages]
 requests = {extras = ["security"],version = "*"}
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

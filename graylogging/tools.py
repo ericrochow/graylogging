@@ -2,8 +2,7 @@
 
 
 def validate_gelf_payload(payload: dict) -> bool:
-    """
-    """
+    """"""
     required_keys = ["version", "host", "short_message"]
     builtin_keys = required_keys + ["full_message", "timestamp", "level"]
     for rkey in required_keys:

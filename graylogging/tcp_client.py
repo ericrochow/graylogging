@@ -18,7 +18,7 @@ class TCPGELF(object):
         Sends a message to Graylog using GELF over TCP.
 
         Args:
-          payload:
+          payload: A dict containing the log message and metadata to push to Graylog
         Returns:
           None
         Raises:
@@ -30,14 +30,11 @@ class TCPGELF(object):
             try:
                 s.sendall(log + b"\0")
             except OSError:
-                self.logger.exception(
-                    "Failed to send the following log entry: %s", log
-                )
+                self.logger.exception("Failed to send the following log entry: %s", log)
                 pass
             s.shutdown(1)
 
     async def send_gelf(self, payload: dict):
-        """
-        """
+        """"""
         if validate_gelf_payload(payload):
             return self._push_log(payload)
