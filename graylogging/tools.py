@@ -16,3 +16,4 @@ def validate_gelf_payload(payload: dict) -> bool:
             )
     if "_id" in payload.keys():
         raise KeyError("_id is reserved for internal use.")
+    return True

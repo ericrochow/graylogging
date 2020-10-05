@@ -7,13 +7,13 @@ import socket
 from graylogging.tools import validate_gelf_payload
 
 
-class UDPGraylog(object):
+class UDPGELF(object):
     def __init__(self, host, port, debug=False):
         self.host = host
         self.port = port
         self.logger = logging.getLogger(__name__)
 
-    async def push_logs(self, payload: dict):
+    def push_logs(self, payload: dict):
         """
 
         Args:
@@ -28,9 +28,11 @@ class UDPGraylog(object):
             try:
                 s.sendto(log, (self.host, self.port))
             except OSError:
-                self.logger.exception("Failed to send the following log entry: %s", log)
+                self.logger.exception(
+                    "Failed to send the following log entry: %s", log
+                )
 
-    async def send_gelf(self, payload: dict):
+    def send_gelf(self, payload: dict):
         """"""
         if validate_gelf_payload(payload):
             return self.push_logs(payload)
