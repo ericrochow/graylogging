@@ -5,9 +5,10 @@ import socket
 import time
 
 from graylogging.http_client import HTTPGELF
+from graylogging.tcp_client import TCPGELF
+from graylogging.udp_client import UDPGELF
 
 
-# class GraylogHandler(logging.Handler, logging.getLoggerClass):
 class GraylogHandler(logging.Handler):
     """
     A handler class which writes logging records, in GELF format, to a Graylog
@@ -132,6 +133,7 @@ class GraylogHandler(logging.Handler):
         self,
         host,
         port=None,
+        transport="tcp",
         facility=LOG_USER,
         hostname=socket.gethostname(),
         appname=None,
@@ -169,13 +171,19 @@ class GraylogHandler(logging.Handler):
         Returns:
           An instantiated Graylog object.
         """
-        graylog = HTTPGELF(self.host, self.port, timeout=10, verify=True)
+        if self.transport.lower() == "tcp":
+            graylog = TCPGELF(self.host, self.port)
+        elif self.transport.lower() == "udp":
+            graylog = UDPGELF(self.host, self.port)
+        elif self.transport.lower() == "http":
+            graylog = HTTPGELF(self.host, self.port, timeout=10, verify=True)
+        else:
+            raise ValueError(f"{self.transport} is not a valid transport type")
         return graylog
 
     @classmethod
     def _map_level_name(cls, level):
-        """
-        """
+        """"""
         if level.upper() not in GraylogHandler.level_names:
             raise ValueError(
                 "%s is not a valid log level. Please choose one of %l",
@@ -188,8 +196,7 @@ class GraylogHandler(logging.Handler):
 
     @classmethod
     def _map_level_int_to_name(cls, level):
-        """
-        """
+        """"""
         try:
             log_level = GraylogHandler.level_names[level]
         except IndexError:
@@ -387,13 +394,12 @@ class GraylogHandler(logging.Handler):
             if record.funcName != "<module>":
                 msg_payload["_function"] = record.funcName
             self.send(msg_payload)
-        except Exception as e:
+        except Exception:
             self.handleError(record)
 
 
 class GraylogFormatter(logging.Formatter):
-    """
-    """
+    """"""
 
     def __init__(self):
 
