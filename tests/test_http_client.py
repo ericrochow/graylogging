@@ -4,10 +4,10 @@ import time
 
 import pytest
 
-from tests.config import HOSTNAME, LOG_LEVEL, PORT, SERVER, VERIFY
-from graylogging.client import Graylog
+from tests.config import HOSTNAME, LOG_LEVEL, HTTP_PORT, SERVER, VERIFY
+from graylogging.http_client import HTTPGELF
 
-GL = Graylog(SERVER, port=PORT, verify=VERIFY, log_level=LOG_LEVEL)
+GL = HTTPGELF(SERVER, port=HTTP_PORT, verify=VERIFY, log_level=LOG_LEVEL)
 
 PAYLOAD_SEED = {
     "_application": "graylogging_client",
@@ -102,8 +102,9 @@ def test_with_str_int_level():
     PAYLOAD_SEED["level"] = LEVEL
 
 
-# Tests for the `send_gelf` method of the Graylog class
-def test_gelf_post():
-    resp = GL.send_gelf(PAYLOAD_SEED)  # noqa: F841
-    assert resp["status_code"] == 202
-    # assert 1 == 2
+# # Tests for the `send_gelf` method of the Graylog class
+# def test_gelf_post():
+# resp = GL.send_gelf(PAYLOAD_SEED)  # noqa: F841
+# print(resp)
+# assert resp["status_code"] == 202
+# # assert 1 == 2

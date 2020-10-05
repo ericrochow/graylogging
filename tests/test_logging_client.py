@@ -8,7 +8,9 @@ import time
 from tests.config import (
     HOSTNAME,
     # LOG_LEVEL,
-    PORT,
+    HTTP_PORT,
+    TCP_PORT,
+    UDP_PORT,
     SERVER,
     # VERIFY,
 )  # noqa: F401
@@ -18,10 +20,12 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 # LOG_FORMATTER = GraylogFormatter()
 GF = GraylogFormatter()
-GH = GraylogHandler(SERVER, port=PORT, appname="pytest")
-GH.setFormatter(GF)
-# GH.setLevel(logging.DEBUG)
-LOGGER.handlers = [GH]
+HGELF = GraylogHandler(SERVER, port=HTTP_PORT, transport="http", appname="pytest")
+TGELF = GraylogHandler(SERVER, port=TCP_PORT, transport="tcp", appname="pytest")
+UGELF = GraylogHandler(SERVER, port=UDP_PORT, transport="udp", appname="pytest")
+HGELF.setFormatter(GF)
+# HGELF.setLevel(logging.DEBUG)
+LOGGER.handlers = [HGELF, TGELF, UGELF]
 TS = time.time()
 
 
@@ -44,40 +48,59 @@ def test_formatter():
         level="1",
         _appname="pytest",
         _foo="bar",
-        _success=True
+        _success=True,
     )
     assert resp["_success"]
 
 
 # Tests for instantiation of the GraylogHandler class
 def test_hostname():
-    assert GH.host == SERVER
+    assert HGELF.host == SERVER
+    assert TGELF.host == SERVER
+    assert UGELF.host == SERVER
 
 
 def test_port():
-    assert GH.port == PORT
+    assert HGELF.port == HTTP_PORT
+    assert TGELF.port == TCP_PORT
+    assert UGELF.port == UDP_PORT
 
 
 def test_appname():
-    assert GH.appname == "pytest"
+    assert HGELF.appname == "pytest"
+    assert TGELF.appname == "pytest"
+    assert UGELF.appname == "pytest"
 
 
-def test_client_object():
-    obj = GH._connect_graylog()
+def test_http_client_object():
+    obj = HGELF._connect_graylog()
     assert obj.proto == "https"
     assert obj.host == SERVER
-    assert obj.port == PORT
-    assert obj.url == f"https://{SERVER}:{PORT}/gelf"
+    assert obj.port == HTTP_PORT
+    assert obj.url == f"https://{SERVER}:{HTTP_PORT}/gelf"
     assert obj.sess
 
 
+def test_tcp_client_object():
+    obj = TGELF._connect_graylog()
+    assert obj.host == SERVER
+    assert obj.port == TCP_PORT
+
+
+def test_udp_client_object():
+    obj = UGELF._connect_graylog()
+    assert obj.host == SERVER
+    assert obj.port == UDP_PORT
+
+
 # Tests for various log level methods
+
 
 def test_debug():
     # I'm still trying to figure out how to verify logging output; assigning to
     # a variable doesn't seem to do anything.
     resp = LOGGER.debug(
-        "Successful test from %s via the graylogging logging wrapper!", HOSTNAME
+        f"Successful test from {HOSTNAME} via the graylogging logging wrapper!"
     )
     assert resp is None
 
@@ -104,94 +127,94 @@ def test_exception():
 
 # Tests for miscellany
 def test_timestamp_with_timestamp_provided():
-    ts = GH._get_timestamp(TS)
+    ts = HGELF._get_timestamp(TS)
     assert ts == TS
 
 
 def test_timestamp_without_timestamp_provided():
-    ts = GH._get_timestamp(None)
+    ts = HGELF._get_timestamp(None)
     assert ts >= TS
 
 
 def test_extra_args_with_id():
     extra_args = {"_id": 69, "foo": "bar"}
     with pytest.raises(KeyError):
-        GH._extra_args(**extra_args)
+        HGELF._extra_args(**extra_args)
 
 
 def test_extra_args_no_underscore():
     extra_args = {"foo": "bar"}
     with pytest.raises(KeyError):
-        GH._extra_args(**extra_args)
+        HGELF._extra_args(**extra_args)
 
 
 def test_extra_args_all_valid():
     extra_args = {"_foo": "bar"}
-    resp = GH._extra_args(**extra_args)
+    resp = HGELF._extra_args(**extra_args)
     assert resp["_foo"] == "bar"
 
 
 def test_level_name_valid_int():
     loglevel = 7
-    resp = GH.encodeLogLevel(loglevel)
+    resp = HGELF.encodeLogLevel(loglevel)
     assert resp == "DEBUG"
 
 
 def test_level_name_valid_string():
     loglevel = "debug"
-    resp = GH.encodeLogLevel(loglevel)
+    resp = HGELF.encodeLogLevel(loglevel)
     assert resp == "DEBUG"
 
 
 def test_level_name_int_str():
     loglevel = "7"
-    resp = GH.encodeLogLevel(loglevel)
+    resp = HGELF.encodeLogLevel(loglevel)
     assert resp == "DEBUG"
 
 
 def test_level_name_invalid_int():
     loglevel = 8
     with pytest.raises(ValueError):
-        GH.encodeLogLevel(loglevel)
+        HGELF.encodeLogLevel(loglevel)
 
 
 def test_level_name_invalid_string():
     loglevel = "WARMING"
     with pytest.raises(ValueError):
-        GH.encodeLogLevel(loglevel)
+        HGELF.encodeLogLevel(loglevel)
 
 
 def test_level_name_invalid_int_str():
     loglevel = "8"
     with pytest.raises(ValueError):
-        GH.encodeLogLevel(loglevel)
+        HGELF.encodeLogLevel(loglevel)
 
 
 def test_priority_encoding_both_strings():
     facility = "local6"
     priority = "debug"
-    resp = GH.encodePriority(facility, priority)
+    resp = HGELF.encodePriority(facility, priority)
     assert resp
 
 
 def test_priority_encoding_str_int():
     facility = "local6"
     priority = 7
-    resp = GH.encodePriority(facility, priority)
+    resp = HGELF.encodePriority(facility, priority)
     assert resp
 
 
 def test_priority_encoding_int_str():
     facility = 22
     priority = "debug"
-    resp = GH.encodePriority(facility, priority)
+    resp = HGELF.encodePriority(facility, priority)
     assert resp
 
 
 def test_values_with_stringified_ints():
     facility = "22"
     priority = "7"
-    resp = GH.encodePriority(facility, priority)
+    resp = HGELF.encodePriority(facility, priority)
     assert resp
 
 
@@ -199,28 +222,28 @@ def test_priority_encoding_invalid_priority_int():
     facility = 22
     priority = 8
     with pytest.raises(ValueError):
-        GH.encodePriority(facility, priority)
+        HGELF.encodePriority(facility, priority)
 
 
 def test_priority_encoding_invalid_int():
     facility = 24
     priority = 7
     with pytest.raises(ValueError):
-        GH.encodePriority(facility, priority)
+        HGELF.encodePriority(facility, priority)
 
 
 def test_priority_encoding_invalid_priority_str():
     facility = "local6"
     priority = "d3bug"
     with pytest.raises(ValueError):
-        GH.encodePriority(facility, priority)
+        HGELF.encodePriority(facility, priority)
 
 
 def test_priority_encoding_invalid_facility_str():
     facility = "locale6"
     priority = "debug"
     with pytest.raises(ValueError):
-        GH.encodePriority(facility, priority)
+        HGELF.encodePriority(facility, priority)
 
 
 # Tests for the other
