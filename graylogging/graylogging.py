@@ -9,6 +9,61 @@ from graylogging.tcp_client import TCPGELF
 from graylogging.udp_client import UDPGELF
 
 
+class GraylogFormatter(logging.Formatter):
+    """"""
+
+    def __init__(self):
+
+        super(GraylogFormatter, self).__init__()
+
+    @classmethod
+    def format(
+        cls,
+        short_message,
+        host=socket.gethostname(),
+        full_message=None,
+        version="1.1",
+        timestamp=None,
+        level=1,
+        _appname=None,
+        **kwargs,
+    ):
+        """
+        Formats input to a dict meeting the GELF specificaiton. Arbitrary
+        fields may be added to the payload so long as they are prepended with
+        an underscore (_).
+
+        Args:
+          host: A string containing the name of the host, source, or
+              application that sent the log message
+          short_message: A string containing a short, descriptive message
+          full_message: A string containing detailed information such as
+              backtraces (optional)
+          version: A string specifying the GELF spec version. Should be '1.1'
+          timestamp: A string specifying the time of the log entry (optional,
+              defaults to current time)
+          level: An integer specifying the syslog level or the associated
+              string name of that level (optional, defaults to 1/ALERT)
+              the log message
+          _appname: A string containing the name of the application logging
+        Returns:
+          A GELF-formatted dictionary formatted to POST to the graylog server.
+        """
+        payload = {
+            "version": version,
+            "host": host,
+            "short_message": short_message,
+            "level": GraylogHandler.encodeLogLevel(level),
+            "timestamp": GraylogHandler._get_timestamp(timestamp),
+            "_application": _appname,
+        }
+        if full_message:
+            payload["full_message"] = full_message
+        extra_args = GraylogHandler._extra_args(**kwargs)
+        payload = {**payload, **extra_args}
+        return payload
+
+
 class GraylogHandler(logging.Handler):
     """
     A handler class which writes logging records, in GELF format, to a Graylog
@@ -397,58 +452,3 @@ class GraylogHandler(logging.Handler):
             self.send(msg_payload)
         except Exception:
             self.handleError(record)
-
-
-class GraylogFormatter(logging.Formatter):
-    """"""
-
-    def __init__(self):
-
-        super(GraylogFormatter, self).__init__()
-
-    @classmethod
-    def format(
-        cls,
-        short_message,
-        host=socket.gethostname(),
-        full_message=None,
-        version="1.1",
-        timestamp=None,
-        level=1,
-        _appname=None,
-        **kwargs,
-    ):
-        """
-        Formats input to a dict meeting the GELF specificaiton. Arbitrary
-        fields may be added to the payload so long as they are prepended with
-        an underscore (_).
-
-        Args:
-          host: A string containing the name of the host, source, or
-              application that sent the log message
-          short_message: A string containing a short, descriptive message
-          full_message: A string containing detailed information such as
-              backtraces (optional)
-          version: A string specifying the GELF spec version. Should be '1.1'
-          timestamp: A string specifying the time of the log entry (optional,
-              defaults to current time)
-          level: An integer specifying the syslog level or the associated
-              string name of that level (optional, defaults to 1/ALERT)
-              the log message
-          _appname: A string containing the name of the application logging
-        Returns:
-          A GELF-formatted dictionary formatted to POST to the graylog server.
-        """
-        payload = {
-            "version": version,
-            "host": host,
-            "short_message": short_message,
-            "level": GraylogHandler.encodeLogLevel(level),
-            "timestamp": GraylogHandler._get_timestamp(timestamp),
-            "_application": _appname,
-        }
-        if full_message:
-            payload["full_message"] = full_message
-        extra_args = GraylogHandler._extra_args(**kwargs)
-        payload = {**payload, **extra_args}
-        return payload
