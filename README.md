@@ -27,14 +27,16 @@ Import both the `logging` and the `graylogging` module:
 After those have been imported, you can use both the GraylogHandler and GraylogFormatter classes like the other built-in Formatters and Handlers:
 
     logger = logging.getLogger(name)
-    gh = GraylogHandler(graylog_server, gelf_port, appname="MyKickassApp")
+    gh = GraylogHandler(graylog_server, gelf_port, transport="tcp", appname="MyKickassApp")
     gh.setFormatter(GraylogFormatter)
     logger.addHandler(gh)
     logger.setLevel(logging.DEBUG)
 
+The transport options are "tcp", "udp", and "http"; the correct choice will depend on the Graylog input configuration. 
+
 This handler could also be used in conjunction with another handler. For example if it's desired to output the logs to console as well, we can accomplish this with the following example:
 
-    graylog_server = "https://graylog.contoso.com"
+    graylog_server = "graylog.contoso.com"
     gelf_port = 12201
     appname = "MyKickassApp"
     log_level = logging.INFO
@@ -47,7 +49,7 @@ This handler could also be used in conjunction with another handler. For example
     sh = logging.StreamHandler()
     sh.setFormatter(console_formatter)
     logger.handlers = [ch]
-    gh = GraylogHandler(graylog_server, gelf_port, appname=appname)
+    gh = GraylogHandler(graylog_server, gelf_port, transport="http", appname=appname)
     gh.setFormatter(GraylogFormatter)
     logger.addHandler(gh)
     logger.setLevel(log_level)
