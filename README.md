@@ -73,7 +73,6 @@ One logging has been initialized, graylogging can be used just like the built-in
 
 Graylogging can be fed either a string as normal, or a dict that will be json-encoded before shipping. This will allow a configured pipeline rule to parse the json and extract the key-value pairs into searchable fields. Example pipeline rule:
 
-::
     rule "parse gelf json input"
     when
       contains(to_string($message.application), "MyKickassApp")

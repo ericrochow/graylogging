@@ -14,7 +14,7 @@ with open(
 ) as f:
     exec(f.read(), about)
 
-with open("README.md", mode="r", encoding="utf-8") as f:
+with open("readme.rst", mode="r", encoding="utf-8") as f:
     readme = f.read()
 with open("HISTORY.md", mode="r", encoding="utf-8") as f:
     history = f.read()
@@ -70,6 +70,7 @@ setup(
     extras_require={"docs": ["Sphinx", "SimpleHTTPServer", "sphinx_rtd_theme"]},
     install_requires=["requests[security]"],
     long_description=readme,
+    long_description_content_type="text/markdown",
     name=about["__title__"],
     packages=packages,
     package_dir={"graylogging": "graylogging"},
