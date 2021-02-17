@@ -14,7 +14,7 @@ with open(
 ) as f:
     exec(f.read(), about)
 
-with open("readme.rst", mode="r", encoding="utf-8") as f:
+with open("README.md", mode="r", encoding="utf-8") as f:
     readme = f.read()
 with open("HISTORY.md", mode="r", encoding="utf-8") as f:
     history = f.read()
