@@ -9,6 +9,7 @@ pytest = "*"
 twine = "*"
 flake8 = "*"
 black = "*"
+bandit = "*"
 
 [packages]
 requests = {extras = ["security"],version = "*"}
