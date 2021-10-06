@@ -12,19 +12,18 @@ from tests.config import (
     TCP_PORT,
     UDP_PORT,
     SERVER,
-    # VERIFY,
+    VERIFY,
 )  # noqa: F401
 from graylogging.graylogging import GraylogFormatter, GraylogHandler
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
-# LOG_FORMATTER = GraylogFormatter()
 GF = GraylogFormatter()
-HGELF = GraylogHandler(SERVER, port=HTTP_PORT, transport="http", appname="pytest")
+HGELF = GraylogHandler(
+    SERVER, port=HTTP_PORT, transport="http", appname="pytest", verify=VERIFY
+)
 TGELF = GraylogHandler(SERVER, port=TCP_PORT, transport="tcp", appname="pytest")
 UGELF = GraylogHandler(SERVER, port=UDP_PORT, transport="udp", appname="pytest")
-HGELF.setFormatter(GF)
-# HGELF.setLevel(logging.DEBUG)
 LOGGER.handlers = [HGELF, TGELF, UGELF]
 TS = time.time()
 

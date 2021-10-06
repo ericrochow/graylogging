@@ -192,6 +192,7 @@ class GraylogHandler(logging.Handler):
         facility=LOG_USER,
         hostname=socket.gethostname(),
         appname=None,
+        verify=True,
         close_on_error=False,
     ):
         """
@@ -204,6 +205,8 @@ class GraylogHandler(logging.Handler):
               defaults to LOG_USER)
           appname: A string specifying the name of the application that is
               logging if different from `source` (optional)
+          verify: A boolean specifying whether to verify the server's TLS cert
+              (optional, defaults to True)
         Returns:
           An instantiated GraylogHandler object.
         """
@@ -215,6 +218,7 @@ class GraylogHandler(logging.Handler):
         self.facility = facility
         self.closeOnError = close_on_error
         self.hostname = hostname
+        self.verify = verify
         if appname:
             self.appname = appname
 
@@ -232,7 +236,7 @@ class GraylogHandler(logging.Handler):
         elif self.transport.lower() == "udp":
             graylog = UDPGELF(self.host, self.port)
         elif self.transport.lower() == "http":
-            graylog = HTTPGELF(self.host, self.port, timeout=10, verify=True)
+            graylog = HTTPGELF(self.host, self.port, timeout=10, verify=self.verify)
         else:
             raise ValueError(f"{self.transport} is not a valid transport type")
         return graylog
