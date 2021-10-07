@@ -17,9 +17,8 @@ class GraylogFormatter(logging.Formatter):
 
         super(GraylogFormatter, self).__init__()
 
-    @classmethod
     def format(
-        cls,
+        self,
         short_message: str,
         host: str = socket.gethostname(),
         full_message: str = None,
@@ -54,8 +53,8 @@ class GraylogFormatter(logging.Formatter):
             "version": version,
             "host": host,
             "short_message": short_message,
-            "level": GraylogHandler.encodeLogLevel(level),
-            "timestamp": GraylogHandler._get_timestamp(timestamp),
+            "level": self.encodeLogLevel(level),
+            "timestamp": self._get_timestamp(timestamp),
             "_application": _appname,
         }
         if full_message:
