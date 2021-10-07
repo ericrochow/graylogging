@@ -7,8 +7,8 @@ import socket
 from graylogging.tools import validate_gelf_payload
 
 
-class TCPGELF(object):
-    def __init__(self, host: str, port: int, debug: bool = False):
+class TCPGELF:
+    def __init__(self, host: str, port: int) -> None:
         self.host = host
         self.port = port
         self.logger = logging.getLogger(__name__)

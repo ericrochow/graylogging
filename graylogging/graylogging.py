@@ -253,9 +253,8 @@ class GraylogHandler(logging.Handler):
                 level,
                 GraylogHandler.level_names,
             )
-        else:
-            log_level = level.upper()
-        return log_level.upper()
+        log_level = level.upper()
+        return log_level
 
     @classmethod
     def _map_level_int_to_name(cls, level: int) -> str:
@@ -264,8 +263,7 @@ class GraylogHandler(logging.Handler):
             log_level = GraylogHandler.level_names[level]
         except IndexError:
             raise ValueError(
-                "%d is not a valid log level. Expected values range from 0 to 7.",
-                level,
+                f"{level} is not a valid log level. Expected values range from 0 to 7."
             )
         return log_level
 
@@ -362,13 +360,11 @@ class GraylogHandler(logging.Handler):
                 facility = self.facility_names[facility]
             else:
                 raise ValueError("%s is an invalid facility name.")
-        elif isinstance(facility, int):
-            if facility > 23:
-                raise ValueError(
-                    "Valid facilities range from 0 to 23. %d does not fall"
-                    " within that range",
-                    facility,
-                )
+        elif isinstance(facility, int) and facility > 23:
+            raise ValueError(
+                f"Valid facilities range from 0 to 23. {facility} does not fall"
+                " within that range"
+            )
         try:
             priority = int(priority)
         except ValueError:
@@ -378,13 +374,11 @@ class GraylogHandler(logging.Handler):
                 priority = self.priority_names[priority]
             else:
                 raise ValueError("%s is an invalid priority name.")
-        elif isinstance(priority, int):
-            if priority > 7:
-                raise ValueError(
-                    "Valid priorities range from 0 to 7. %d does not fall"
-                    " within that range.",
-                    priority,
-                )
+        elif isinstance(priority, int) and priority > 7:
+            raise ValueError(
+                f"Valid priorities range from 0 to 7. {priority} does not fall"
+                " within that range."
+            )
         return (facility << 3) | priority
 
     @classmethod
