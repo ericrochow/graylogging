@@ -29,6 +29,11 @@ if sys.argv[-1] == "publish":
 class PyTest(TestCommand):
     user_options = [("pytest-args=", "a", "Arguments to pass into py.test")]
 
+    def __init__(self):
+        self.pytest_args = []
+        self.test_args = []
+        self.test_suite = True
+
     def initialize_options(self):
         TestCommand.initialize_options(self)
         try:
@@ -37,13 +42,9 @@ class PyTest(TestCommand):
             self.pytest_args = ["-n", str(cpu_count()), "--boxed"]
         except (ImportError, NotImplementedError):
             self.pytest_args = ["-n", "1", "--boxed"]
-        else:
-            self.pytest_args = []
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
 
     def run_tests(self):
         import pytest
