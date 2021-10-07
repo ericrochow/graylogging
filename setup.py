@@ -33,6 +33,7 @@ class PyTest(TestCommand):
         self.pytest_args = []
         self.test_args = []
         self.test_suite = True
+        super().__init__()
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
