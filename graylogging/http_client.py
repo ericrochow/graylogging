@@ -6,7 +6,7 @@ import requests
 from graylogging.tools import validate_gelf_payload
 
 
-class HTTPGELF(object):
+class HTTPGELF:
     """"""
 
     def __init__(

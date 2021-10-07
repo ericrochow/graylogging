@@ -7,7 +7,7 @@ import socket
 from graylogging.tools import validate_gelf_payload
 
 
-class TCPGELF(object):
+class TCPGELF:
     def __init__(self, host, port, debug=False):
         self.host = host
         self.port = port
@@ -30,9 +30,7 @@ class TCPGELF(object):
             try:
                 s.sendall(log + b"\0")
             except OSError:
-                self.logger.exception(
-                    "Failed to send the following log entry: %s", log
-                )
+                self.logger.exception("Failed to send the following log entry: %s", log)
                 pass
             s.shutdown(1)
 
