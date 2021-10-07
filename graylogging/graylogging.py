@@ -260,8 +260,7 @@ class GraylogHandler(logging.Handler):
             log_level = GraylogHandler.level_names[level]
         except IndexError:
             raise ValueError(
-                "%d is not a valid log level. Expected values range from 0 to 7.",
-                level,
+                f"{level} is not a valid log level. Expected values range from 0 to 7."
             )
         return log_level
 
@@ -360,9 +359,8 @@ class GraylogHandler(logging.Handler):
                 raise ValueError("%s is an invalid facility name.")
         elif isinstance(facility, int) and facility > 23:
             raise ValueError(
-                "Valid facilities range from 0 to 23. %d does not fall"
-                " within that range",
-                facility,
+                f"Valid facilities range from 0 to 23. {facility} does not fall"
+                " within that range"
             )
         try:
             priority = int(priority)
@@ -375,9 +373,8 @@ class GraylogHandler(logging.Handler):
                 raise ValueError("%s is an invalid priority name.")
         elif isinstance(priority, int) and priority > 7:
             raise ValueError(
-                "Valid priorities range from 0 to 7. %d does not fall"
-                " within that range.",
-                priority,
+                f"Valid priorities range from 0 to 7. {priority} does not fall"
+                " within that range."
             )
         return (facility << 3) | priority
 
