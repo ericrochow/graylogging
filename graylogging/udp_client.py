@@ -8,7 +8,7 @@ from graylogging.tools import validate_gelf_payload
 
 
 class UDPGELF:
-    def __init__(self, host: str, port: int, debug: bool = False):
+    def __init__(self, host: str, port: int) -> None:
         self.host = host
         self.port = port
         self.logger = logging.getLogger(__name__)

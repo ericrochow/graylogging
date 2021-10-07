@@ -16,7 +16,6 @@ class HTTPGELF:
         protocol: str = "https",
         timeout: int = 30,
         verify: bool = True,
-        log_level: str = "WARNING",
     ) -> None:
         self.proto = protocol
         self.host = host
