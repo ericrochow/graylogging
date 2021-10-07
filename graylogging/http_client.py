@@ -11,12 +11,13 @@ class HTTPGELF:
 
     def __init__(
         self,
-        host,
-        port=12201,
-        protocol="https",
-        timeout=30,
-        verify=True,
-    ):
+        host: str,
+        port: int = 12201,
+        protocol: str = "https",
+        timeout: int = 30,
+        verify: bool = True,
+        log_level: str = "WARNING",
+    ) -> None:
         self.proto = protocol
         self.host = host
         self.port = port
@@ -29,18 +30,18 @@ class HTTPGELF:
         self.sess = requests.Session()
         self.url = f"{self.proto}://{self.host}:{self.port}/gelf"
 
-    def _post(self, params):
+    def _post(self, body: dict) -> dict:
         """
         Sends an HTTP POST request.
 
         Args:
-          params: A dictionary containing the JSON-formatted GELF payload
+          body: A dictionary containing the JSON-formatted GELF payload
         Returns:
           The result of the POST request.
         """
         resp = self.sess.post(
             self.url,
-            json=params,
+            json=body,
             headers=self.headers,
             timeout=self.timeout,
             verify=self.verify,
@@ -60,7 +61,7 @@ class HTTPGELF:
         else:
             resp.raise_for_status()
 
-    def _validate_gelf_payload(self, body):
+    def _validate_gelf_payload(self, body: dict) -> bool:
         """
         Validate the GELF payload to make sure proper keys are included and no
             reserved keys are used.
@@ -89,7 +90,7 @@ class HTTPGELF:
             raise KeyError("_id is reserved for internal use.")
         return True
 
-    def send_gelf(self, body):
+    def send_gelf(self, body: dict) -> dict:
         """
         Sends a message to Graylog using GELF.
 

@@ -3,6 +3,7 @@
 import logging
 import socket
 import time
+from typing import Union
 
 from graylogging.http_client import HTTPGELF
 from graylogging.tcp_client import TCPGELF
@@ -19,15 +20,15 @@ class GraylogFormatter(logging.Formatter):
     @classmethod
     def format(
         cls,
-        short_message,
-        host=socket.gethostname(),
-        full_message=None,
-        version="1.1",
-        timestamp=None,
-        level=1,
-        _appname=None,
+        short_message: str,
+        host: str = socket.gethostname(),
+        full_message: str = None,
+        version: str = "1.1",
+        timestamp: str = None,
+        level: int = 1,
+        _appname: str = None,
         **kwargs,
-    ):
+    ) -> None:
         """
         Formats input to a dict meeting the GELF specificaiton. Arbitrary
         fields may be added to the payload so long as they are prepended with
@@ -186,23 +187,23 @@ class GraylogHandler(logging.Handler):
 
     def __init__(
         self,
-        host,
-        port=None,
-        transport="tcp",
-        facility=LOG_USER,
-        hostname=socket.gethostname(),
-        appname=None,
-        verify=True,
-        close_on_error=False,
-    ):
+        host: str,
+        port: int = None,
+        transport: str = "tcp",
+        facility: int = LOG_USER,
+        hostname: str = socket.gethostname(),
+        appname: str = None,
+        verify: bool = True,
+        close_on_error: bool = False,
+    ) -> None:
         """
         Initialize a handler.
 
         Args:
           host: A string specifying the URL of the Graylog target
           port: An integer specifying the port number for the Graylog target
-          facility: A string specifying the log facility to use (optional,
-              defaults to LOG_USER)
+          facility: An integer specifying the log facility to use (optional,
+              defaults to the value of LOG_USER: 1)
           appname: A string specifying the name of the application that is
               logging if different from `source` (optional)
           verify: A boolean specifying whether to verify the server's TLS cert
@@ -222,7 +223,7 @@ class GraylogHandler(logging.Handler):
         if appname:
             self.appname = appname
 
-    def _connect_graylog(self):
+    def _connect_graylog(self) -> Union[TCPGELF, UDPGELF, HTTPGELF]:
         """
         Instantiates a Graylog object.
 
@@ -230,6 +231,8 @@ class GraylogHandler(logging.Handler):
           None
         Returns:
           An instantiated Graylog object.
+        Raises:
+          ValueError: {self.transport} is not a valid transport type
         """
         if self.transport.lower() == "tcp":
             graylog = TCPGELF(self.host, self.port)
@@ -242,7 +245,7 @@ class GraylogHandler(logging.Handler):
         return graylog
 
     @classmethod
-    def _map_level_name(cls, level):
+    def _map_level_name(cls, level: str) -> str:
         """"""
         if level.upper() not in GraylogHandler.level_names:
             raise ValueError(
@@ -254,7 +257,7 @@ class GraylogHandler(logging.Handler):
         return log_level
 
     @classmethod
-    def _map_level_int_to_name(cls, level):
+    def _map_level_int_to_name(cls, level: int) -> str:
         """"""
         try:
             log_level = GraylogHandler.level_names[level]
@@ -265,7 +268,7 @@ class GraylogHandler(logging.Handler):
         return log_level
 
     @staticmethod
-    def _get_timestamp(timestamp):
+    def _get_timestamp(timestamp: Union[float, str, None]) -> float:
         """
         Applies the timestamp if there isn't one already.
 
@@ -280,7 +283,7 @@ class GraylogHandler(logging.Handler):
         return timestamp
 
     @staticmethod
-    def _extra_args(**kwargs):
+    def _extra_args(**kwargs) -> dict:
         """
         Safely generates a dictionary of extra arguments to pass in the GELF
             payload.
@@ -305,7 +308,7 @@ class GraylogHandler(logging.Handler):
                 )
         return extra_args
 
-    def send(self, payload):
+    def send(self, payload: str) -> dict:
         """
         Send a JSON object to the GELF endpoint.
 
@@ -317,7 +320,7 @@ class GraylogHandler(logging.Handler):
         graylog = self._connect_graylog()
         return graylog.send_gelf(payload)
 
-    def handleError(self, record):
+    def handleError(self, record) -> None:
         """
         Handle an error during logging.
         An error has occurred during logging. Most likely cause -
@@ -335,7 +338,7 @@ class GraylogHandler(logging.Handler):
         else:
             logging.Handler.handleError(self, record)
 
-    def encodePriority(self, facility, priority):
+    def encodePriority(self, facility: Union[str, int], priority: Union[str, int]):
         """
         Encode the facility and priority. You can pass in strings or
         integers - if strings are passed, the facility_names and
@@ -379,7 +382,7 @@ class GraylogHandler(logging.Handler):
         return (facility << 3) | priority
 
     @classmethod
-    def encodeLogLevel(cls, loglevel):
+    def encodeLogLevel(cls, loglevel: str) -> str:
         """
 
         Args:
@@ -400,7 +403,7 @@ class GraylogHandler(logging.Handler):
             level = GraylogHandler._map_level_int_to_name(loglevel)
         return level
 
-    def mapPriority(self, levelName):
+    def mapPriority(self, levelName: str) -> int:
         """
         Map a logging level name to a key in the priority_names map.
         This is useful in two scenarios: when custom levels are being
@@ -415,7 +418,7 @@ class GraylogHandler(logging.Handler):
         """
         return self.priority_map.get(levelName, "warning")
 
-    def emit(self, record):
+    def emit(self, record) -> None:
         """
         Emit a record.
         Formats the record for GELF and writes it to the server.

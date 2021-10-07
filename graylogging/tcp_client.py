@@ -8,12 +8,12 @@ from graylogging.tools import validate_gelf_payload
 
 
 class TCPGELF:
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int, debug: bool = False):
         self.host = host
         self.port = port
         self.logger = logging.getLogger(__name__)
 
-    def push_log(self, payload: dict):
+    def push_log(self, payload: dict) -> None:
         """
         Sends a message to Graylog using GELF over TCP.
 
@@ -34,7 +34,7 @@ class TCPGELF:
                 pass
             s.shutdown(1)
 
-    def send_gelf(self, payload: dict):
+    def send_gelf(self, payload: dict) -> None:
         """"""
         if validate_gelf_payload(payload):
             return self.push_log(payload)
