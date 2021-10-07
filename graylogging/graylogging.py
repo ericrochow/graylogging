@@ -28,7 +28,7 @@ class GraylogFormatter(logging.Formatter):
         level: int = 1,
         _appname: str = None,
         **kwargs,
-    ) -> None:
+    ) -> dict:
         """
         Formats input to a dict meeting the GELF specificaiton. Arbitrary
         fields may be added to the payload so long as they are prepended with
