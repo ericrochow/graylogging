@@ -250,9 +250,8 @@ class GraylogHandler(logging.Handler):
                 level,
                 GraylogHandler.level_names,
             )
-        else:
-            log_level = level.upper()
-        return log_level.upper()
+        log_level = level.upper()
+        return log_level
 
     @classmethod
     def _map_level_int_to_name(cls, level):
