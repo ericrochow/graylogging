@@ -267,7 +267,7 @@ class GraylogHandler(logging.Handler):
         return log_level
 
     @staticmethod
-    def _get_timestamp(timestamp: Union[float, str, None]) -> float:
+    def _get_timestamp(timestamp: Union[float, str, None]) -> Union[float, str]:
         """
         Applies the timestamp if there isn't one already.
 
