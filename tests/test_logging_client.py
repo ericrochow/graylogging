@@ -88,8 +88,6 @@ def test_udp_client_object():
 
 
 # Tests for various log level methods
-
-
 def test_debug():
     # I'm still trying to figure out how to verify logging output; assigning to
     # a variable doesn't seem to do anything.
