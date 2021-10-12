@@ -28,11 +28,6 @@ LOGGER.handlers = [HGELF, TGELF, UGELF]
 TS = time.time()
 
 
-# Test to verify py.test
-def test_pytest():
-    assert 1 == 1
-
-
 # Test GraylogFormatter class
 def test_formatter():
     resp = GF.format(
@@ -106,6 +101,11 @@ def test_debug():
 
 def test_info():
     resp = LOGGER.info("JUST FYI")
+    assert resp is None
+
+
+def test_warning():
+    resp = LOGGER.warning("Woopsie!")
     assert resp is None
 
 
