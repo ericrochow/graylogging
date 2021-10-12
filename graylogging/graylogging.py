@@ -17,6 +17,7 @@ class GraylogFormatter(logging.Formatter):
 
         super(GraylogFormatter, self).__init__()
 
+    @classmethod
     def format(
         self,
         short_message: str,
@@ -53,8 +54,8 @@ class GraylogFormatter(logging.Formatter):
             "version": version,
             "host": host,
             "short_message": short_message,
-            "level": self.encodeLogLevel(level),
-            "timestamp": self._get_timestamp(timestamp),
+            "level": GraylogHandler.encodeLogLevel(level),
+            "timestamp": GraylogHandler._get_timestamp(timestamp),
             "_application": _appname,
         }
         if full_message:
@@ -125,7 +126,7 @@ class GraylogHandler(logging.Handler):
     level_names = [
         "EMERG",
         "ALERT",
-        "CRIT",
+        "CRITICAL",
         "ERROR",
         "WARNING",
         "NOTICE",
@@ -248,9 +249,8 @@ class GraylogHandler(logging.Handler):
         """"""
         if level.upper() not in GraylogHandler.level_names:
             raise ValueError(
-                "%s is not a valid log level. Please choose one of %l",
-                level,
-                GraylogHandler.level_names,
+                f"{level} is not a valid log level. Please choose one of "
+                f"{GraylogHandler.level_names}",
             )
         log_level = level.upper()
         return log_level
@@ -358,7 +358,7 @@ class GraylogHandler(logging.Handler):
             if facility in self.facility_names.keys():
                 facility = self.facility_names[facility]
             else:
-                raise ValueError("%s is an invalid facility name.")
+                raise ValueError(f"{facility} is an invalid facility name.")
         elif isinstance(facility, int) and facility > 23:
             raise ValueError(
                 f"Valid facilities range from 0 to 23. {facility} does not fall"
@@ -372,7 +372,7 @@ class GraylogHandler(logging.Handler):
             if priority in self.priority_names.keys():
                 priority = self.priority_names[priority]
             else:
-                raise ValueError("%s is an invalid priority name.")
+                raise ValueError(f"{priority} is an invalid priority name.")
         elif isinstance(priority, int) and priority > 7:
             raise ValueError(
                 f"Valid priorities range from 0 to 7. {priority} does not fall"
