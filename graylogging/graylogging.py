@@ -389,8 +389,6 @@ class GraylogHandler(logging.Handler):
               associated integer
         Returns:
           A string containing the properly-formatted log level.
-        Raises:
-          ValueError: invalid log level profided.
         """
         try:
             loglevel = int(loglevel)
