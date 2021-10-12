@@ -297,13 +297,13 @@ class GraylogHandler(logging.Handler):
         """
         extra_args = {}
         if "_id" in kwargs:
-            raise KeyError("'_id' is an internally used key and is not" " usable here")
+            raise KeyError("'_id' is an internally used key and is not usable here")
         for key, value in kwargs.items():
             if key.startswith("_"):
                 extra_args[key] = value
             else:
                 raise KeyError(
-                    "User-defined fields must be prepended with an" " underscore (_)."
+                    "User-defined fields must be prepended with an underscore (_)."
                 )
         return extra_args
 
@@ -417,13 +417,13 @@ class GraylogHandler(logging.Handler):
         """
         return self.priority_map.get(levelName, "warning")
 
-    def emit(self, record) -> None:
+    def emit(self, record: logging.LogRecord) -> None:
         """
         Emit a record.
         Formats the record for GELF and writes it to the server.
 
         Args:
-          record
+          record: A LogRecord object
         Returns:
           None
         """
