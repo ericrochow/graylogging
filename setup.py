@@ -4,7 +4,6 @@ from io import open
 import os
 import sys
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
 here = os.path.abspath(os.path.dirname(__file__))
 about = {}
@@ -26,35 +25,6 @@ if sys.argv[-1] == "publish":
     sys.exit()
 
 
-class PyTest(TestCommand):
-    user_options = [("pytest-args=", "a", "Arguments to pass into py.test")]
-
-    def __init__(self):
-        self.pytest_args = []
-        self.test_args = []
-        self.test_suite = True
-        super().__init__()
-
-    def initialize_options(self):
-        TestCommand.initialize_options(self)
-        try:
-            from multiprocessing import cpu_count
-
-            self.pytest_args = ["-n", str(cpu_count()), "--boxed"]
-        except (ImportError, NotImplementedError):
-            self.pytest_args = ["-n", "1", "--boxed"]
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-
-    def run_tests(self):
-        import pytest
-
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
-
-test_requires = ["pytest", "pytest-mock"]
 packages = find_packages(exclude=["tests"])
 
 setup(
@@ -77,7 +47,6 @@ setup(
     packages=packages,
     package_dir={"graylogging": "graylogging"},
     python_requires=">=3.6",
-    tests_require=test_requires,
     url=about["__url__"],
     version=about["__version__"],
     zip_safe=False,
