@@ -413,7 +413,7 @@ class GraylogHandler(logging.Handler):
         Returns:
           An integer specifying the priority level.
         """
-        return self.priority_map.get(levelName, "warning")
+        return self.priority_map.get(levelName, 4)
 
     def emit(self, record: logging.LogRecord) -> None:
         """
