@@ -3,7 +3,7 @@
 import logging
 import socket
 import time
-from typing import Union
+from typing import Optional, Union
 
 from graylogging.http_client import HTTPGELF
 from graylogging.tcp_client import TCPGELF
@@ -18,7 +18,7 @@ class GraylogFormatter(logging.Formatter):
         super(GraylogFormatter, self).__init__()
 
     @classmethod
-    def format(
+    def format_record(
         cls,
         short_message: str,
         host: str = socket.gethostname(),
@@ -28,7 +28,7 @@ class GraylogFormatter(logging.Formatter):
         level: int = 1,
         _appname: str = None,
         **kwargs,
-    ) -> None:
+    ) -> dict:
         """
         Formats input to a dict meeting the GELF specificaiton. Arbitrary
         fields may be added to the payload so long as they are prepended with
@@ -126,7 +126,7 @@ class GraylogHandler(logging.Handler):
     level_names = [
         "EMERG",
         "ALERT",
-        "CRIT",
+        "CRITICAL",
         "ERROR",
         "WARNING",
         "NOTICE",
@@ -249,9 +249,8 @@ class GraylogHandler(logging.Handler):
         """"""
         if level.upper() not in GraylogHandler.level_names:
             raise ValueError(
-                "%s is not a valid log level. Please choose one of %l",
-                level,
-                GraylogHandler.level_names,
+                f"{level} is not a valid log level. Please choose one of "
+                f"{GraylogHandler.level_names}",
             )
         log_level = level.upper()
         return log_level
@@ -268,7 +267,7 @@ class GraylogHandler(logging.Handler):
         return log_level
 
     @staticmethod
-    def _get_timestamp(timestamp: Union[float, str, None]) -> float:
+    def _get_timestamp(timestamp: Union[float, str, None]) -> Union[float, str]:
         """
         Applies the timestamp if there isn't one already.
 
@@ -298,17 +297,17 @@ class GraylogHandler(logging.Handler):
         """
         extra_args = {}
         if "_id" in kwargs:
-            raise KeyError("'_id' is an internally used key and is not" " usable here")
+            raise KeyError("'_id' is an internally used key and is not usable here")
         for key, value in kwargs.items():
             if key.startswith("_"):
                 extra_args[key] = value
             else:
                 raise KeyError(
-                    "User-defined fields must be prepended with an" " underscore (_)."
+                    "User-defined fields must be prepended with an underscore (_)."
                 )
         return extra_args
 
-    def send(self, payload: str) -> dict:
+    def send(self, payload: str) -> Optional[dict]:
         """
         Send a JSON object to the GELF endpoint.
 
@@ -359,7 +358,7 @@ class GraylogHandler(logging.Handler):
             if facility in self.facility_names.keys():
                 facility = self.facility_names[facility]
             else:
-                raise ValueError("%s is an invalid facility name.")
+                raise ValueError(f"{facility} is an invalid facility name.")
         elif isinstance(facility, int) and facility > 23:
             raise ValueError(
                 f"Valid facilities range from 0 to 23. {facility} does not fall"
@@ -373,7 +372,7 @@ class GraylogHandler(logging.Handler):
             if priority in self.priority_names.keys():
                 priority = self.priority_names[priority]
             else:
-                raise ValueError("%s is an invalid priority name.")
+                raise ValueError(f"{priority} is an invalid priority name.")
         elif isinstance(priority, int) and priority > 7:
             raise ValueError(
                 f"Valid priorities range from 0 to 7. {priority} does not fall"
@@ -390,8 +389,6 @@ class GraylogHandler(logging.Handler):
               associated integer
         Returns:
           A string containing the properly-formatted log level.
-        Raises:
-          ValueError: invalid log level profided.
         """
         try:
             loglevel = int(loglevel)
@@ -403,7 +400,7 @@ class GraylogHandler(logging.Handler):
             level = GraylogHandler._map_level_int_to_name(loglevel)
         return level
 
-    def mapPriority(self, levelName: str) -> int:
+    def mapPriority(self, levelName: str) -> Union[str, int]:
         """
         Map a logging level name to a key in the priority_names map.
         This is useful in two scenarios: when custom levels are being
@@ -416,20 +413,20 @@ class GraylogHandler(logging.Handler):
         Returns:
           An integer specifying the priority level.
         """
-        return self.priority_map.get(levelName, "warning")
+        return self.priority_map.get(levelName, 4)
 
-    def emit(self, record) -> None:
+    def emit(self, record: logging.LogRecord) -> None:
         """
         Emit a record.
         Formats the record for GELF and writes it to the server.
 
         Args:
-          record
+          record: A LogRecord object
         Returns:
           None
         """
         try:
-            msg_payload = GraylogFormatter.format(
+            msg_payload = GraylogFormatter.format_record(
                 record.msg,
                 host=self.hostname,
                 full_message=record.stack_info,
