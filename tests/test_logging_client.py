@@ -12,31 +12,25 @@ from tests.config import (
     TCP_PORT,
     UDP_PORT,
     SERVER,
-    # VERIFY,
+    VERIFY,
 )  # noqa: F401
 from graylogging.graylogging import GraylogFormatter, GraylogHandler
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
-# LOG_FORMATTER = GraylogFormatter()
 GF = GraylogFormatter()
-HGELF = GraylogHandler(SERVER, port=HTTP_PORT, transport="http", appname="pytest")
+HGELF = GraylogHandler(
+    SERVER, port=HTTP_PORT, transport="http", appname="pytest", verify=VERIFY
+)
 TGELF = GraylogHandler(SERVER, port=TCP_PORT, transport="tcp", appname="pytest")
 UGELF = GraylogHandler(SERVER, port=UDP_PORT, transport="udp", appname="pytest")
-HGELF.setFormatter(GF)
-# HGELF.setLevel(logging.DEBUG)
 LOGGER.handlers = [HGELF, TGELF, UGELF]
 TS = time.time()
 
 
-# Test to verify py.test
-def test_pytest():
-    assert 1 == 1
-
-
 # Test GraylogFormatter class
 def test_formatter():
-    resp = GF.format(
+    resp = GF.format_record(
         "successfully formatted!",
         host=HOSTNAME,
         full_message=(
@@ -94,8 +88,6 @@ def test_udp_client_object():
 
 
 # Tests for various log level methods
-
-
 def test_debug():
     # I'm still trying to figure out how to verify logging output; assigning to
     # a variable doesn't seem to do anything.
@@ -107,6 +99,11 @@ def test_debug():
 
 def test_info():
     resp = LOGGER.info("JUST FYI")
+    assert resp is None
+
+
+def test_warning():
+    resp = LOGGER.warning("Woopsie!")
     assert resp is None
 
 

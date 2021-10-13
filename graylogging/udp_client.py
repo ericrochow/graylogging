@@ -3,17 +3,18 @@
 import json
 import logging
 import socket
+from typing import Optional
 
 from graylogging.tools import validate_gelf_payload
 
 
-class UDPGELF(object):
-    def __init__(self, host, port, debug=False):
+class UDPGELF:
+    def __init__(self, host: str, port: Optional[int] = 12201) -> None:
         self.host = host
         self.port = port
         self.logger = logging.getLogger(__name__)
 
-    def push_logs(self, payload: dict):
+    def push_logs(self, payload: dict) -> None:
         """
 
         Args:
@@ -28,11 +29,9 @@ class UDPGELF(object):
             try:
                 s.sendto(log, (self.host, self.port))
             except OSError:
-                self.logger.exception(
-                    "Failed to send the following log entry: %s", log
-                )
+                self.logger.exception("Failed to send the following log entry: %s", log)
 
-    def send_gelf(self, payload: dict):
+    def send_gelf(self, payload: dict) -> None:
         """"""
         if validate_gelf_payload(payload):
             return self.push_logs(payload)

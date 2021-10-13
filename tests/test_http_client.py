@@ -4,10 +4,14 @@ import time
 
 import pytest
 
-from tests.config import HOSTNAME, LOG_LEVEL, HTTP_PORT, SERVER, VERIFY
+from tests.config import HOSTNAME, HTTP_PORT, SERVER, VERIFY
 from graylogging.http_client import HTTPGELF
 
-GL = HTTPGELF(SERVER, port=HTTP_PORT, verify=VERIFY, log_level=LOG_LEVEL)
+GL = HTTPGELF(
+    SERVER,
+    port=HTTP_PORT,
+    verify=VERIFY,
+)
 
 PAYLOAD_SEED = {
     "_application": "graylogging_client",
@@ -30,11 +34,6 @@ PAYLOAD_SEED = {
     "timestamp": time.time(),
     "version": "1.1",
 }
-
-
-# Test to verify py.test
-def test_pytest():
-    assert 1 == 1
 
 
 # Tests for the `validate_gelf_payload` method of the Graylog class
