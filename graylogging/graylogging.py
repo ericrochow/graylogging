@@ -3,7 +3,7 @@
 import logging
 import socket
 import time
-from typing import Union
+from typing import Optional, Union
 
 from graylogging.http_client import HTTPGELF
 from graylogging.tcp_client import TCPGELF
@@ -307,7 +307,7 @@ class GraylogHandler(logging.Handler):
                 )
         return extra_args
 
-    def send(self, payload: str) -> dict:
+    def send(self, payload: str) -> Optional[dict]:
         """
         Send a JSON object to the GELF endpoint.
 
@@ -400,7 +400,7 @@ class GraylogHandler(logging.Handler):
             level = GraylogHandler._map_level_int_to_name(loglevel)
         return level
 
-    def mapPriority(self, levelName: str) -> int:
+    def mapPriority(self, levelName: str) -> Union[str, int]:
         """
         Map a logging level name to a key in the priority_names map.
         This is useful in two scenarios: when custom levels are being
