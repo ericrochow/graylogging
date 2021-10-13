@@ -18,8 +18,8 @@ class GraylogFormatter(logging.Formatter):
         super(GraylogFormatter, self).__init__()
 
     @classmethod
-    def format(
-        self,
+    def format_record(
+        cls,
         short_message: str,
         host: str = socket.gethostname(),
         full_message: str = None,
@@ -426,7 +426,7 @@ class GraylogHandler(logging.Handler):
           None
         """
         try:
-            msg_payload = GraylogFormatter.format(
+            msg_payload = GraylogFormatter.format_record(
                 record.msg,
                 host=self.hostname,
                 full_message=record.stack_info,

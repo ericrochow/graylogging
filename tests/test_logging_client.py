@@ -30,7 +30,7 @@ TS = time.time()
 
 # Test GraylogFormatter class
 def test_formatter():
-    resp = GF.format(
+    resp = GF.format_record(
         "successfully formatted!",
         host=HOSTNAME,
         full_message=(
