@@ -3,12 +3,13 @@
 import json
 import logging
 import socket
+from typing import Optional
 
 from graylogging.tools import validate_gelf_payload
 
 
 class UDPGELF:
-    def __init__(self, host: str, port: int) -> None:
+    def __init__(self, host: str, port: Optional[int] = 12201) -> None:
         self.host = host
         self.port = port
         self.logger = logging.getLogger(__name__)

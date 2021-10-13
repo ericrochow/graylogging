@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 import requests
+from typing import Optional
 
 from graylogging.tools import validate_gelf_payload
 
@@ -12,7 +13,7 @@ class HTTPGELF:
     def __init__(
         self,
         host: str,
-        port: int = 12201,
+        port: Optional[int] = 12201,
         protocol: str = "https",
         timeout: int = 30,
         verify: bool = True,
