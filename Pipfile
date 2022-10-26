@@ -13,6 +13,7 @@ pydocstyle = "*"
 pylint = "*"
 pytest = "*"
 twine = "*"
+types-requests = "*"
 
 [packages]
 requests = {extras = ["security"],version = "*"}
