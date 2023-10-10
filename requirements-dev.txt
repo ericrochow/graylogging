@@ -28,7 +28,7 @@ exceptiongroup==1.1.1; python_version < '3.11'
 executing==1.2.0
 flake8==5.0.4
 gitdb==4.0.10; python_version >= '3.7'
-gitpython==3.1.31; python_version >= '3.7'
+gitpython==3.1.37; python_version >= '3.7'
 idna==3.4; python_version >= '3.5'
 importlib-metadata==6.6.0; python_version >= '3.7'
 iniconfig==2.0.0; python_version >= '3.7'
